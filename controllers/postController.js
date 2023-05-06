@@ -36,7 +36,12 @@ const createPost = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await db.post.findAll();
+    const posts = await db.post.findAll({
+      include: [
+        { model: db.user, attributes: ["fullName", "avatarURL"] },
+        { model: db.tagPost, attributes: ["tagOne", "tagTwo", "tagThree"] },
+      ],
+    });
     res.json(posts);
   } catch (error) {
     res.status(500).json({ "message": error.message });
