@@ -57,10 +57,15 @@ const getOnePost = async (req, res) => {
       { where: { id: postId } }
     );
 
-    const post = await db.post.findByPk(postId);
-    const tagsPost = await db.tagPost.findOne({ where: { postId } });
+    const post = await db.post.findOne({
+      where: { id: postId },
+      include: [
+        { model: db.user, attributes: ["fullName", "avatarURL"] },
+        { model: db.tagPost, attributes: ["tagOne", "tagTwo", "tagThree"] },
+      ],
+    });
 
-    res.json({ post, tagsPost });
+    res.json({ post });
   } catch (error) {
     res.status(500).json({ "message": error.message });
   }

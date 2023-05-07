@@ -13,7 +13,7 @@ router.post(
   verifyRoles(ROLES_LIST.admin),
   postController.createTags
 );
-router.get("/:id", verifyJWT, postController.getOnePost);
+router.get("/:id", postController.getOnePost);
 router.delete(
   "/:id",
   verifyJWT,
