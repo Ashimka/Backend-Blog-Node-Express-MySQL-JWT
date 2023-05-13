@@ -15,5 +15,6 @@ router.get(
   verifyRoles(ROLES_LIST.admin),
   userController.getAllUsers
 );
+router.get("/posts", verifyJWT, userController.getAllPostsUser);
 
 module.exports = router;

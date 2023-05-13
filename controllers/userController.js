@@ -30,8 +30,32 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ "message": error.message });
   }
 };
+const getAllPostsUser = async (req, res) => {
+  try {
+    const id = req.id;
+
+    const posts = await db.post.findAll({
+      where: { userId: id },
+      include: [
+        { model: db.user, attributes: ["fullName", "avatarURL"] },
+        { model: db.tagPost, attributes: ["tagOne", "tagTwo", "tagThree"] },
+      ],
+    });
+
+    if (!posts.length) {
+      return res.status(200).json({
+        message: "У вас нет постов",
+      });
+    }
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
   getMe,
   getAllUsers,
+  getAllPostsUser,
 };
