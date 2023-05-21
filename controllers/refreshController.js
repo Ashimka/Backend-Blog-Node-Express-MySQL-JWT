@@ -46,11 +46,11 @@ const handleRefreshToken = async (req, res) => {
           "UserInfo": {
             "email": decoded.email,
             "id": decoded.id,
-            "role": roles,
+            roles,
           },
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "15m" }
+        { expiresIn: "25m" }
       );
       res.status(200).json({ accessToken });
     }

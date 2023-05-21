@@ -6,23 +6,40 @@ const db = require("../database/models");
 const createPost = async (req, res) => {
   try {
     const { title, text } = req.body;
-    const { imageURL } = req.files;
 
-    const fileExt = imageURL.name.split(".")[1];
+    if (req.files) {
+      const fileExt = imageURL.name.split(".")[1];
 
-    let faleName = uuid.v4() + `.${fileExt}`;
+      let faleName = uuid.v4() + `.${fileExt}`;
 
-    imageURL.mv(path.resolve(__dirname, "..", "static", faleName));
+      imageURL.mv(path.resolve(__dirname, "..", "static", faleName));
 
-    const post = await db.post.create({
+      const postWithImage = await db.post.create({
+        title,
+        text,
+        imageURL: faleName,
+        userId: req.id,
+      });
+
+      const tagsPost = await db.tagPost.create({
+        postId: postWithImage.id,
+        tagOne: "React",
+        tagTwo: "JavaScript",
+        tagThree: "Web",
+      });
+
+      res.status(201).json({ message: "Post create!" });
+    }
+
+    const newPost = await db.post.create({
       title,
       text,
-      imageURL: faleName,
+      imageURL: "",
       userId: req.id,
     });
 
     const tagsPost = await db.tagPost.create({
-      postId: post.id,
+      postId: newPost.id,
       tagOne: "React",
       tagTwo: "JavaScript",
       tagThree: "Web",
@@ -92,32 +109,28 @@ const removePost = async (req, res) => {
 
 const updatePost = async (req, res) => {
   try {
-    const postId = req.params.id;
-    const { imageURL } = req.files;
+    const { title, text } = req.body;
+    const id = req.params.id;
 
-    const fileExt = imageURL.name.split(".")[1];
-
-    let faleName = uuid.v4() + `.${fileExt}`;
-
-    imageURL.mv(path.resolve(__dirname, "..", "static", faleName));
-
-    const post = await db.post.findOne({
-      where: {
-        id: postId,
-      },
+    const postUpdate = await db.post.findOne({
+      where: { id },
     });
 
-    if (post.userId === req.id) {
-      post.title = req.body.title;
-      post.text = req.body.text;
-      post.imageURL = faleName;
-      await post.save();
+    if (req.files) {
+      const fileExt = imageURL.name.split(".")[1];
+
+      let faleName = uuid.v4() + `.${fileExt}`;
+
+      imageURL.mv(path.resolve(__dirname, "..", "static", faleName));
+
+      postUpdate.imageURL = faleName;
     }
 
-    if (post.userId !== req.id) {
-      return res.json({ message: "нет доступа" });
-    }
-    res.json(post);
+    postUpdate.title = title;
+    postUpdate.text = text;
+    await postUpdate.save();
+
+    res.json(postUpdate);
   } catch (error) {
     res.status(500).json({ "message": error.message });
   }
