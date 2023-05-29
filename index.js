@@ -1,10 +1,8 @@
 require("dotenv").config();
 
 const express = require("express");
-const path = require("path");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const fileUpload = require("express-fileupload");
 
 const db = require("./database/models");
 const corsOptions = require("./config/corsOptions.js");
@@ -22,10 +20,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
 
-app.use(express.static(path.resolve(__dirname, "static")));
-app.use(fileUpload({}));
-
 app.use("/", router);
+app.use("/uploads", express.static("static"));
 
 const start = async () => {
   try {
