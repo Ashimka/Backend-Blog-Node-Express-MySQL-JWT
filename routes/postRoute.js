@@ -20,6 +20,6 @@ router.delete(
   verifyRoles(ROLES_LIST.admin),
   postController.removePost
 );
-router.put("/:id/edit", verifyJWT, postController.updatePost);
+router.patch("/:id/edit", verifyJWT, postController.updatePost);
 
 module.exports = router;

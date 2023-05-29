@@ -1,3 +1,4 @@
+const { log } = require("console");
 const path = require("path");
 const uuid = require("uuid");
 
@@ -7,8 +8,17 @@ const createPost = async (req, res) => {
   try {
     const { title, text } = req.body;
 
+    if (!title || !text) {
+      return res
+        .status(400)
+        .json({ message: "Не заполнен заголовок или содержимое поста" });
+    }
+
     if (req.files) {
-      const fileExt = imageURL.name.split(".")[1];
+      const { imageURL } = req.files;
+
+      const fileExt =
+        imageURL.name.split(".")[imageURL.name.split(".").length - 1];
 
       let faleName = uuid.v4() + `.${fileExt}`;
 
@@ -17,7 +27,7 @@ const createPost = async (req, res) => {
       const postWithImage = await db.post.create({
         title,
         text,
-        imageURL: faleName,
+        "imageURL": faleName,
         userId: req.id,
       });
 
@@ -28,13 +38,12 @@ const createPost = async (req, res) => {
         tagThree: "Web",
       });
 
-      res.status(201).json({ message: "Post create!" });
+      return res.status(201).json({ postWithImage });
     }
 
     const newPost = await db.post.create({
       title,
       text,
-      imageURL: "",
       userId: req.id,
     });
 
@@ -45,8 +54,9 @@ const createPost = async (req, res) => {
       tagThree: "Web",
     });
 
-    res.status(201).json({ message: "Post create!" });
+    return res.status(201).json({ newPost });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ "message": error.message });
   }
 };
@@ -110,27 +120,41 @@ const removePost = async (req, res) => {
 const updatePost = async (req, res) => {
   try {
     const { title, text } = req.body;
+
     const id = req.params.id;
+    const userId = req.id;
 
     const postUpdate = await db.post.findOne({
       where: { id },
     });
 
-    if (req.files) {
-      const fileExt = imageURL.name.split(".")[1];
+    if (userId === postUpdate.userId) {
+      if (req.files) {
+        const { imageURL } = req.files;
 
-      let faleName = uuid.v4() + `.${fileExt}`;
+        const fileExt =
+          imageURL.name.split(".")[imageURL.name.split(".").length - 1];
 
-      imageURL.mv(path.resolve(__dirname, "..", "static", faleName));
+        let faleName = uuid.v4() + `.${fileExt}`;
 
-      postUpdate.imageURL = faleName;
+        imageURL.mv(path.resolve(__dirname, "..", "static", faleName));
+
+        postUpdate.imageURL = faleName;
+        postUpdate.title = title;
+        postUpdate.text = text;
+        await postUpdate.save();
+
+        return res.json(postUpdate);
+      } else {
+        postUpdate.title = title;
+        postUpdate.text = text;
+        await postUpdate.save();
+
+        return res.json(postUpdate);
+      }
     }
 
-    postUpdate.title = title;
-    postUpdate.text = text;
-    await postUpdate.save();
-
-    res.json(postUpdate);
+    res.json({ message: "нет доступа" });
   } catch (error) {
     res.status(500).json({ "message": error.message });
   }
