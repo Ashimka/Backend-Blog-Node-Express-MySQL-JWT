@@ -9,8 +9,9 @@ const router = new Router();
 const upload = multer({ storage });
 
 router.post("/", verifyJWT, upload.single("image"), (req, res) => {
+  console.log(req.file);
   res.json({
-    url: `/static/${req.file.originalname}`,
+    url: `/${req.file.filename}`,
   });
 });
 
