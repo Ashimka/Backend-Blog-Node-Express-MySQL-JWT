@@ -1,11 +1,8 @@
-const path = require("path");
-const uuid = require("uuid");
-
 const db = require("../database/models");
 
 const createPost = async (req, res) => {
   try {
-    const { title, text, imageURL } = req.body;
+    const { title, text, imageURL, tags } = req.body;
 
     const newPost = await db.post.create({
       title,
@@ -16,9 +13,7 @@ const createPost = async (req, res) => {
 
     const tagsPost = await db.tagPost.create({
       postId: newPost.id,
-      tagOne: "React",
-      tagTwo: "JavaScript",
-      tagThree: "Web",
+      tags,
     });
 
     return res.status(201).json({ newPost });
@@ -33,7 +28,7 @@ const getAllPosts = async (req, res) => {
     const posts = await db.post.findAll({
       include: [
         { model: db.user, attributes: ["fullName", "avatarURL"] },
-        { model: db.tagPost, attributes: ["tagOne", "tagTwo", "tagThree"] },
+        { model: db.tagPost, attributes: ["tags"] },
       ],
     });
     res.json(posts);
@@ -55,7 +50,7 @@ const getOnePost = async (req, res) => {
       where: { id: postId },
       include: [
         { model: db.user, attributes: ["fullName", "avatarURL"] },
-        { model: db.tagPost, attributes: ["tagOne", "tagTwo", "tagThree"] },
+        { model: db.tagPost, attributes: ["tags"] },
       ],
     });
 
@@ -130,6 +125,17 @@ const createTags = async (req, res) => {
   }
 };
 
+const getTagsList = async (req, res) => {
+  try {
+    const tags = await db.tagList.findAll({
+      attributes: ["tag"],
+    });
+    res.json(tags);
+  } catch (error) {
+    res.status(500).json({ "message": error.message });
+  }
+};
+
 module.exports = {
   createPost,
   getAllPosts,
@@ -137,4 +143,5 @@ module.exports = {
   removePost,
   updatePost,
   createTags,
+  getTagsList,
 };

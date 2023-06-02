@@ -39,7 +39,7 @@ const getAllPostsUser = async (req, res) => {
       where: { userId: id },
       include: [
         { model: db.user, attributes: ["fullName", "avatarURL"] },
-        { model: db.tagPost, attributes: ["tagOne", "tagTwo", "tagThree"] },
+        { model: db.tagPost, attributes: ["tags"] },
       ],
     });
 
