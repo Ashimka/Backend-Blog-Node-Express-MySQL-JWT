@@ -81,7 +81,7 @@ const removePost = async (req, res) => {
 
 const updatePost = async (req, res) => {
   try {
-    const { title, text, imageURL } = req.body;
+    const { title, text, imageURL, tags } = req.body;
 
     const id = req.params.id;
     const userId = req.id;
@@ -90,11 +90,20 @@ const updatePost = async (req, res) => {
       where: { id },
     });
 
+    const postTagsUpdate = await db.tagPost.findOne({
+      where: {
+        postId: id,
+      },
+    });
+
     if (userId === postUpdate.userId) {
       postUpdate.imageURL = imageURL;
       postUpdate.title = title;
       postUpdate.text = text;
+      postTagsUpdate.tags = tags;
+
       await postUpdate.save();
+      await postTagsUpdate.save();
 
       return res.json(postUpdate);
     }
