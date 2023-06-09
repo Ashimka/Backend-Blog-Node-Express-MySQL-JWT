@@ -40,7 +40,7 @@ const TagPost = db.tagPost;
 User.hasOne(Role, {
   onDelete: "CASCADE",
 });
-// Role.belongsTo(User, { onDelete: "CASCADE" });
+
 Post.hasOne(TagPost, {
   onDelete: "CASCADE",
 });
@@ -54,9 +54,5 @@ Comment.belongsTo(User, { onDelete: "CASCADE" });
 
 Post.hasMany(Comment, { onDelete: "CASCADE" });
 Comment.belongsTo(Post, { onDelete: "CASCADE" });
-
-// связь многие ко многим
-// Post.belongsToMany(TagList, { through: TagPost });
-// TagList.belongsToMany(Post, { through: TagPost });
 
 module.exports = db;

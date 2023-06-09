@@ -2,6 +2,8 @@ const Router = require("express");
 const router = new Router();
 
 const postController = require("../controllers/postController");
+const commentController = require("../controllers/commentController");
+
 const verifyJWT = require("../middleware/verifyJWT");
 const verifyRoles = require("../middleware/verifyRoles");
 const ROLES_LIST = require("../config/rolesList");
@@ -22,5 +24,6 @@ router.delete(
   postController.removePost
 );
 router.patch("/:id/edit", verifyJWT, postController.updatePost);
+router.post("/:id/comments", verifyJWT, commentController.createComment);
 
 module.exports = router;
