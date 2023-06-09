@@ -3,7 +3,7 @@ const db = require("../database/models");
 const createComment = async (req, res) => {
   try {
     const { text } = req.body;
-    const userId = req.userId;
+    const userId = req.id;
     const postId = req.params.id;
 
     const newComment = await db.comment.create({
