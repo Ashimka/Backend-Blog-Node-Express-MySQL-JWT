@@ -17,12 +17,20 @@ router.post(
 );
 router.get("/tags", verifyJWT, postController.getTagsList);
 router.get("/:id", postController.getOnePost);
+
 router.delete(
   "/:id",
   verifyJWT,
   verifyRoles(ROLES_LIST.admin),
   postController.removePost
 );
+router.delete(
+  "/:id/comment",
+  verifyJWT,
+  verifyRoles(ROLES_LIST.admin),
+  commentController.deleteComment
+);
+
 router.patch("/:id/edit", verifyJWT, postController.updatePost);
 router.post("/:id/comments", verifyJWT, commentController.createComment);
 

@@ -19,4 +19,26 @@ const createComment = async (req, res) => {
   }
 };
 
-module.exports = { createComment };
+const deleteComment = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const comment = await db.comment.findOne({
+      where: { id },
+    });
+
+    if (!comment) {
+      return res.json({ message: "Комментарий не найден" });
+    }
+
+    const result = await db.comment.destroy({
+      where: { id },
+    });
+
+    res.json({ message: "Комментарий удален" });
+  } catch (error) {
+    res.status(500).json({ "message": error.message });
+  }
+};
+
+module.exports = { createComment, deleteComment };
