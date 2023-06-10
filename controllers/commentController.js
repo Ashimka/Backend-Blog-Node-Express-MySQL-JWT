@@ -21,7 +21,7 @@ const createComment = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   try {
-    const { id } = req.body;
+    const id = req.params.id;
 
     const comment = await db.comment.findOne({
       where: { id },

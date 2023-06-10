@@ -25,7 +25,7 @@ router.delete(
   postController.removePost
 );
 router.delete(
-  "/:id/comment",
+  "/comment/:id",
   verifyJWT,
   verifyRoles(ROLES_LIST.admin),
   commentController.deleteComment
