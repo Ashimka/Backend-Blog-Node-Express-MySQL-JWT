@@ -51,7 +51,11 @@ const getOnePost = async (req, res) => {
       include: [
         { model: db.user, attributes: ["fullName", "avatarURL"] },
         { model: db.tagPost, attributes: ["tags"] },
-        { model: db.comment, attributes: ["text"] },
+        {
+          model: db.comment,
+          attributes: ["text", "id", "userId"],
+          include: [{ model: db.user, attributes: ["fullName", "avatarURL"] }],
+        },
       ],
     });
 

@@ -1,7 +1,7 @@
 const verifyRoles = (...allowedRoles) => {
   return (req, res, next) => {
     if (!req?.roles) {
-      return res.status(401).json({ message: "Не авторизован1" });
+      return res.status(401).json({ message: "Не авторизован" });
     }
     const rolesArrey = [...allowedRoles];
 
@@ -10,7 +10,7 @@ const verifyRoles = (...allowedRoles) => {
       .find((value) => value === true);
 
     if (!result) {
-      return res.status(401).json({ message: "Не авторизован" });
+      return res.status(401).json({ message: "Нет доступа" });
     }
     next();
   };
