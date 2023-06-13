@@ -16,5 +16,6 @@ router.get(
   userController.getAllUsers
 );
 router.get("/posts", verifyJWT, userController.getAllPostsUser);
+router.patch("/profile", verifyJWT, userController.userAvatarUpdate);
 
 module.exports = router;

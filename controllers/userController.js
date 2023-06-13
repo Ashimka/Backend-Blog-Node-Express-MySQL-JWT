@@ -31,6 +31,7 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ "message": error.message });
   }
 };
+
 const getAllPostsUser = async (req, res) => {
   try {
     const id = req.id;
@@ -55,8 +56,31 @@ const getAllPostsUser = async (req, res) => {
   }
 };
 
+const userAvatarUpdate = async (req, res) => {
+  try {
+    const { avatarURL } = req.body;
+    const userId = req.id;
+
+    const user = await db.user.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return res.json({ message: "пользователь не найден" });
+    }
+    user.avatarURL = avatarURL;
+    await user.save();
+
+    return res.json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ "message": error.message });
+  }
+};
+
 module.exports = {
   getMe,
   getAllUsers,
   getAllPostsUser,
+  userAvatarUpdate,
 };
