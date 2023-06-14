@@ -41,6 +41,7 @@ const getAllPostsUser = async (req, res) => {
       include: [
         { model: db.user, attributes: ["fullName", "avatarURL"] },
         { model: db.tagPost, attributes: ["tags"] },
+        { model: db.comment, attributes: ["text"] },
       ],
     });
 

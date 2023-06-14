@@ -1,14 +1,18 @@
+const { format } = require("date-fns");
+
 const db = require("../database/models");
 
 const createPost = async (req, res) => {
   try {
     const { title, text, imageURL, tags } = req.body;
+    const date = `${format(new Date(), "dd-MM-yyyy\tHH:mm")}`;
 
     const newPost = await db.post.create({
       title,
       text,
       imageURL,
       userId: req.id,
+      date,
     });
 
     const tagsPost = await db.tagPost.create({
@@ -54,7 +58,7 @@ const getOnePost = async (req, res) => {
         { model: db.tagPost, attributes: ["tags"] },
         {
           model: db.comment,
-          attributes: ["text", "id", "userId"],
+          attributes: ["text", "id", "userId", "date"],
           include: [{ model: db.user, attributes: ["fullName", "avatarURL"] }],
         },
       ],

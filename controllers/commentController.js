@@ -1,3 +1,5 @@
+const { format } = require("date-fns");
+
 const db = require("../database/models");
 
 const createComment = async (req, res) => {
@@ -6,10 +8,13 @@ const createComment = async (req, res) => {
     const userId = req.id;
     const postId = req.params.id;
 
+    const date = `${format(new Date(), "dd-MM-yyyy\tHH:mm")}`;
+
     const newComment = await db.comment.create({
       text,
       userId,
       postId,
+      date,
     });
 
     return res.status(201).json({ newComment });
